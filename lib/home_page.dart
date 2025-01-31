@@ -1,13 +1,26 @@
+import 'dart:math';
+
+import 'package:app07_imc_202402/imc_calculator.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  double weight = 80;
+  double height = 165;
+
+  IMCCalculator indice = IMCCalculator();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 92, 3, 200),
+        backgroundColor: Color(0xFF003049),
         title: Text("IMC App - 2025"),
         centerTitle: true,
       ),
@@ -17,10 +30,10 @@ class HomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Bienvenido, selecciona su peso y altura",
+              "Bienvenido, selecciona tu peso y altura",
               style: TextStyle(
                 fontSize: 16.0,
-                color: const Color.fromARGB(255, 2, 84, 125),
+                color: Color(0xFF003049),
               ),
             ),
             SizedBox(
@@ -32,33 +45,35 @@ class HomePage extends StatelessWidget {
               textBaseline: TextBaseline.alphabetic,
               children: [
                 Text(
-                  "75",
+                  weight.toInt().toString(),
                   style: TextStyle(
                     fontSize: 30.0,
                     fontWeight: FontWeight.bold,
-                    color: const Color.fromARGB(255, 17, 72, 222),
+                    color: Color(0xFF003049),
                   ),
                 ),
                 SizedBox(
                   width: 2.0,
-                ), //Witth con ROW
+                ),
                 Text(
                   "Kg",
                   style: TextStyle(
                     fontSize: 14.0,
                     fontWeight: FontWeight.w300,
-                    color: const Color.fromARGB(255, 17, 72, 222),
+                    color: Color(0xFF003049),
                   ),
                 ),
               ],
             ),
             Slider(
-              value: 70,
+              value: weight,
               min: 20,
               max: 200,
-              onChanged: (double value) {},
-
-              // overlayColor: Colors.amber,
+              onChanged: (double value) {
+                setState(() {
+                  weight = value;
+                });
+              },
             ),
             SizedBox(
               height: 10.0,
@@ -69,47 +84,58 @@ class HomePage extends StatelessWidget {
               textBaseline: TextBaseline.alphabetic,
               children: [
                 Text(
-                  "168",
+                  height.toInt().toString(),
                   style: TextStyle(
                     fontSize: 30.0,
                     fontWeight: FontWeight.bold,
-                    color: const Color.fromARGB(255, 17, 72, 222),
+                    color: Color(0xFF003049),
                   ),
                 ),
                 SizedBox(
                   width: 2.0,
-                ), //Witth con ROW
+                ),
                 Text(
                   "cm",
                   style: TextStyle(
                     fontSize: 14.0,
                     fontWeight: FontWeight.w300,
-                    color: const Color.fromARGB(255, 17, 72, 222),
+                    color: Color(0xFF003049),
                   ),
                 ),
               ],
             ),
             Slider(
-              value: 70,
+              value: height,
               min: 20,
               max: 200,
-              onChanged: (double value) {},
+              onChanged: (double value) {
+                setState(() {
+                  height = value;
+                });
+              },
             ),
             SizedBox(
               height: 10.0,
             ),
             SizedBox(
               width: double.infinity,
-              height: 50,
+              height: 50.0,
               child: ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  indice.weight = weight;
+                  indice.height = height;
+                  setState(() {});
+                },
                 label: Text(
                   "Calcular",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.0,
+                  ),
                 ),
                 icon: Icon(Icons.play_arrow_rounded),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 8, 0, 64),
+                  backgroundColor: Color(0xFF003049),
                 ),
               ),
             ),
@@ -118,48 +144,59 @@ class HomePage extends StatelessWidget {
             ),
             Divider(
               height: 10.0,
-              color: const Color.fromARGB(255, 7, 7, 255),
+              color: Color(0xFF003049),
             ),
             SizedBox(
               height: 10.0,
             ),
             Text(
-              "Resultado :",
+              "Resultado: ",
               style: TextStyle(
                 fontSize: 15.0,
-                color: const Color.fromARGB(255, 25, 5, 245),
+                color: Color(0xFF003049),
               ),
             ),
             Center(
               child: Image.asset(
-                "assets/images/image2.png",
-                height: 50.0,
-                width: 50.0,
+                "assets/images/${indice.getImage()}.png",
+                height: 200.0,
+                width: 200.0,
                 fit: BoxFit.contain,
               ),
             ),
-            SizedBox(
-              height: 10.0,
-            ),
             Center(
-              child: Text(
-                "Sobrepeso",
-                style: TextStyle(
-                  fontSize: 15.0,
-                  color: const Color.fromARGB(255, 0, 0, 0),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 10.0,
-            ),
-            Center(
-              child: Text(
-                "Toma agua simple,evite el consumo de refresco, jugos o cualquier bebida que contenga azucar.Realize actividad fisica",
-                style: TextStyle(
-                  fontSize: 15.0,
-                  color: const Color.fromARGB(255, 0, 0, 0),
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    indice.calculateIMC().toStringAsFixed(1),
+                    style: TextStyle(
+                      fontSize: 30.0,
+                      color: Color(0xFF780000),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    indice.getResult(),
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: Color(0xFF003049),
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  Text(
+                    indice.getRecommentadtion(),
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      color: Color(0xFF003049),
+                      fontWeight: FontWeight.normal,
+                    ),
+                    textAlign: TextAlign.center,
+                  )
+                ],
               ),
             ),
           ],
